@@ -482,7 +482,7 @@ select { appearance: none; padding-right: 36px; }
   <!-- Step 1: URL -->
   <div class="bookmarklet-bar">
     <p>Będąc na artykule kliknij zakładkę — apka wypełni się automatycznie.</p>
-    <a class="bm-btn" href="javascript:(function(){var url=location.href;var img=null;var preload=document.querySelector('link[rel="preload"][as="image"]');if(preload)img=preload.href;if(!img){var s=document.querySelector('img[srcset]');if(s){var m=(s.getAttribute('srcset')||'').match(/https?:[^\s,]+/);if(m)img=m[0];}}if(!img){var og=document.querySelector('meta[property="og:image"]');if(og)img=og.content;}localStorage.setItem('bm_url',url);localStorage.setItem('bm_img',img||'');window.open('https://arkadiuszgondek.github.io/generator-postow/','_blank');})();" onclick="event.preventDefault();alert('Przeciągnij ten przycisk do paska zakładek!')">📰 Publikuj</a>
+    <a class="bm-btn" href="javascript:(function(){var url=encodeURIComponent(location.href);var img='';var preload=document.querySelector('link[rel="preload"][as="image"]');if(preload)img=encodeURIComponent(preload.href);if(!img){var s=document.querySelector('img[srcset]');if(s){var m=(s.getAttribute('srcset')||'').match(/https?:[^\s,]+/);if(m)img=encodeURIComponent(m[0]);}}if(!img){var og=document.querySelector('meta[property="og:image"]');if(og)img=encodeURIComponent(og.content);}location.href='https://arkadiuszgondek.github.io/generator-postow/?url='+url+'&img='+img;})();">📰 Publikuj</a>
   </div>
 
   <div class="input-group">
@@ -916,16 +916,17 @@ function escHtml(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// Auto-load from bookmarklet
-window.addEventListener('load', function() {
-  const bmUrl = localStorage.getItem('bm_url');
-  const bmImg = localStorage.getItem('bm_img');
+// Auto-load from bookmarklet via URL params
+window.addEventListener('DOMContentLoaded', function() {
+  const params = new URLSearchParams(location.search);
+  const bmUrl = params.get('url');
+  const bmImg = params.get('img');
   if (bmUrl) {
-    localStorage.removeItem('bm_url');
-    localStorage.removeItem('bm_img');
-    document.getElementById('url-input').value = bmUrl;
-    if (bmImg) window.__bmImg = bmImg;
+    document.getElementById('url-input').value = decodeURIComponent(bmUrl);
+    if (bmImg) window.__bmImg = decodeURIComponent(bmImg);
     fetchArticle();
+    // Clean URL bar after fetch starts
+    setTimeout(() => history.replaceState({}, '', location.pathname), 500);
   }
 });
 

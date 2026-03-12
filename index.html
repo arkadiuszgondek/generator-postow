@@ -317,7 +317,7 @@ select { appearance: none; padding-right: 36px; }
 /* Graphic preview */
 .fb-graphic {
   width: 100%;
-  aspect-ratio: 16/9;
+  aspect-ratio: 1;
   background: #1a1a1a;
   position: relative;
   overflow: hidden;
@@ -376,7 +376,7 @@ select { appearance: none; padding-right: 36px; }
 
 .graphic-placeholder {
   width: 100%;
-  aspect-ratio: 16/9;
+  aspect-ratio: 1;
   background: #2a2a2a;
   display: flex;
   align-items: center;
@@ -607,9 +607,15 @@ function generatePostsFromUrl(url) {
   } catch(e) { slug = url; }
 
   // Clean slug to readable title - remove Onet hashes (6-8 char alphanumeric segments)
-  const title = slug
-    .replace(/[-_]/g, ' ')
-    .replace(/\b[a-z0-9]{6,8}\b/gi, '') // remove short hash segments like xvjr13w, 76zcgn2
+  // Split slug into parts, remove hash-like segments (short alphanumeric, mixed letters+digits)
+  const cleanParts = slug.split(/[-_]/).filter(part => {
+    if (part.length < 3) return false; // too short
+    if (/^[0-9]+$/.test(part)) return false; // pure numbers
+    if (part.length <= 8 && /[0-9]/.test(part) && /[a-z]/i.test(part)) return false; // mixed = hash
+    return true;
+  });
+  const title = cleanParts
+    .join(' ')
     .replace(/\s+/g, ' ')
     .trim()
     .replace(/\b\w/g, l => l.toUpperCase());

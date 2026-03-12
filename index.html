@@ -337,6 +337,7 @@ select { appearance: none; padding-right: 36px; }
   display: block;
   user-select: none;
   transition: none;
+  max-width: none;
 }
 .pan-hint {
   position: absolute;
@@ -605,13 +606,13 @@ function generatePostsFromUrl(url) {
     slug = parts[parts.length - 1] || parts[parts.length - 2] || '';
   } catch(e) { slug = url; }
 
-  // Clean slug to readable title
+  // Clean slug to readable title - remove Onet hashes (6-8 char alphanumeric segments)
   const title = slug
     .replace(/[-_]/g, ' ')
-    .replace(/[a-z0-9]{8,}$/i, '') // remove hash at end
+    .replace(/\b[a-z0-9]{6,8}\b/gi, '') // remove short hash segments like xvjr13w, 76zcgn2
     .replace(/\s+/g, ' ')
     .trim()
-    .replace(/\w/g, l => l.toUpperCase());
+    .replace(/\b\w/g, l => l.toUpperCase());
 
   const short = title.length > 80 ? title.substring(0, 80) + '...' : title;
 

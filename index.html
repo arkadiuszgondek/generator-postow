@@ -317,7 +317,7 @@ select { appearance: none; padding-right: 36px; }
 /* Graphic preview */
 .fb-graphic {
   width: 100%;
-  aspect-ratio: 1;
+  aspect-ratio: 16/9;
   background: #1a1a1a;
   position: relative;
   overflow: hidden;
@@ -366,16 +366,16 @@ select { appearance: none; padding-right: 36px; }
 .graphic-question {
   color: white;
   font-family: 'Fira Sans', sans-serif;
-  font-size: clamp(10px, 1.56vw, 14px);
+  font-size: 14px;
   font-weight: 800;
-  line-height: 1.25;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  line-height: 1.3;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.8);
   text-transform: uppercase;
 }
 
 .graphic-placeholder {
   width: 100%;
-  aspect-ratio: 1;
+  aspect-ratio: 16/9;
   background: #2a2a2a;
   display: flex;
   align-items: center;
@@ -778,7 +778,7 @@ function applyUploadedImage(input) {
     wrap.innerHTML = `
       <div class="fb-graphic" id="pan-graphic">
         <img src="${dataUrl}" alt="" id="pan-img" />
-        <div class="graphic-overlay">
+        <div class="graphic-overlay" style="background:linear-gradient(to top,rgba(0,0,0,0.82) 0%,rgba(0,0,0,0.18) 55%,transparent 100%)">
           <div class="graphic-question">${escHtml(question)}</div>
         </div>
         <div class="pan-hint" id="pan-hint">✥ Przeciągnij aby kadrować</div>
@@ -904,8 +904,8 @@ function loadImageFromUrl(imgUrl) {
     <div class="fb-graphic" id="pan-graphic">
       <img src="${imgUrl}" id="pan-img" referrerpolicy="no-referrer"
         onload="initPan()"
-        onerror="document.getElementById('image-hint').textContent='Nie udało się załadować zdjęcia — wgraj ręcznie.'" />
-      <div class="graphic-overlay">
+        onerror="this.parentElement.style.background='#222'" />
+      <div class="graphic-overlay" style="background:linear-gradient(to top,rgba(0,0,0,0.82) 0%,rgba(0,0,0,0.18) 55%,transparent 100%)">
         <div class="graphic-question">${escHtml(question)}</div>
       </div>
       <div class="pan-hint" id="pan-hint">✥ Przeciągnij aby kadrować</div>

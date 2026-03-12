@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer">
+<title>Post Publisher</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&family=Fira+Sans:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f4f3ef;
+  --surface: #ffffff;
+  --border: #e0ddd6;
+  --text: #1a1a1a;
+  --muted: #888;
+  --accent: #ffd300;
+  --accent-hover: #e6be00;
+  --success: #1a7a3f;
+  --radius: 16px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+/* LEFT PANEL */
+.left {
+  padding: 48px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  border-right: 1px solid var(--border);
+  min-height: 100vh;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.logo-dot {
+  width: 10px; height: 10px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+.logo-text {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+}
+
+.section-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+input[type="url"], select {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  padding: 13px 16px;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+input[type="url"]:focus, select:focus {
+  border-color: var(--accent);
+}
+
+input::placeholder { color: var(--muted); }
+
+.url-row { display: flex; gap: 10px; }
+
+.fetch-btn {
+  background: var(--text);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 13px 20px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s, transform 0.1s;
+}
+.fetch-btn:hover:not(:disabled) { background: #333; }
+.fetch-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Posts selector */
+.posts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.post-option {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  position: relative;
+}
+
+.post-option:hover { border-color: #ccc; }
+.post-option.selected { border-color: var(--accent); background: #fffbe6; }
+
+.post-option-tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.post-option.selected .post-option-tag { color: #b39600; }
+
+.post-option-text {
+  font-size: 14px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
+.post-option .check {
+  position: absolute;
+  top: 12px; right: 14px;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+  transition: all 0.2s;
+}
+
+.post-option.selected .check {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+/* Fanpage selector */
+.fanpage-select-wrap { position: relative; }
+.fanpage-select-wrap::after {
+  content: '▾';
+  position: absolute;
+  right: 14px; top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--muted);
+  font-size: 12px;
+}
+select { appearance: none; padding-right: 36px; }
+
+/* Publish btn */
+.publish-btn {
+  background: var(--accent);
+  color: #1a1a1a;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Syne', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 16px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  width: 100%;
+  margin-top: auto;
+}
+.publish-btn:hover:not(:disabled) { background: var(--accent-hover); }
+.publish-btn:active:not(:disabled) { transform: scale(0.99); }
+.publish-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.status-msg {
+  font-size: 13px;
+  text-align: center;
+  padding: 10px;
+  border-radius: 10px;
+  display: none;
+}
+.status-msg.success { background: #e8f5ee; color: var(--success); display: block; }
+.status-msg.error { background: #fdecea; color: #c0392b; display: block; }
+
+/* Spinner */
+.spinner {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Loading shimmer */
+.shimmer {
+  background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite;
+  border-radius: 8px;
+  height: 90px;
+}
+@keyframes shimmer { to { background-position: -200% 0; } }
+
+/* RIGHT PANEL — Preview */
+.right {
+  padding: 48px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: #ece9e3;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.preview-label {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* FB Post Mock */
+.fb-post {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  overflow: hidden;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.fb-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px 10px;
+}
+
+.fb-avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  color: #1a1a1a;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.fb-page-name {
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.fb-meta {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.fb-copy {
+  padding: 0 16px 12px;
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  color: #1c1e21;
+  min-height: 40px;
+}
+
+.fb-copy .fb-link {
+  color: #1877F2;
+}
+
+/* Graphic preview */
+.fb-graphic {
+  width: 100%;
+  aspect-ratio: 1;
+  background: #1a1a1a;
+  position: relative;
+  overflow: hidden;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.fb-graphic.dragging { cursor: grabbing; }
+.fb-graphic * { user-select: none; -webkit-user-select: none; pointer-events: none; }
+.fb-graphic img { pointer-events: none; }
+
+.fb-graphic img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 50%;
+  display: block;
+  user-select: none;
+  transition: none;
+}
+.pan-hint {
+  position: absolute;
+  top: 10px; left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.55);
+  color: white;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  pointer-events: none;
+  white-space: nowrap;
+  opacity: 1;
+  transition: opacity 0.5s;
+}
+
+.graphic-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 60%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 20px;
+}
+
+.graphic-question {
+  color: white;
+  font-family: 'Fira Sans', sans-serif;
+  font-size: clamp(10px, 1.56vw, 14px);
+  font-weight: 800;
+  line-height: 1.25;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  text-transform: uppercase;
+}
+
+.graphic-placeholder {
+  width: 100%;
+  aspect-ratio: 1;
+  background: #2a2a2a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #555;
+  font-size: 13px;
+}
+
+.fb-actions {
+  padding: 8px 16px 14px;
+  display: flex;
+  gap: 4px;
+}
+.fb-action-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 4px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #65676b;
+  cursor: default;
+  text-align: center;
+}
+
+.empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  text-align: center;
+  gap: 12px;
+}
+
+.empty-icon {
+  font-size: 40px;
+  opacity: 0.3;
+}
+
+@media (max-width: 900px) {
+  body { grid-template-columns: 1fr; }
+  .right { position: static; height: auto; }
+}
+
+.dropzone-icon { font-size: 28px; margin-bottom: 6px; }
+.dropzone-text { font-size: 14px; font-weight: 500; color: var(--text); }
+.dropzone-hint { font-size: 11px; color: var(--muted); margin-top: 3px; }
+#image-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 24px 16px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  text-align: center;
+}
+#image-dropzone:hover { border-color: var(--accent); background: #fffbe6; }
+#image-dropzone.has-image { border-style: solid; border-color: var(--accent); background: #fffbe6; }
+</style>
+</head>
+<body>
+
+<!-- LEFT: Controls -->
+<div class="left">
+  <div>
+    <div class="logo"><img src="data:image/png;base64,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" alt="Onet" style="height:28px;width:auto" /></div>
+    <h1>Opublikuj post<br>na Facebooku</h1>
+  </div>
+
+  <!-- Step 1: URL -->
+  <div class="input-group">
+    <div class="section-label">1. Link do artykułu</div>
+    <div class="url-row">
+      <input type="url" id="url-input" placeholder="https://wiadomosci.onet.pl/..." />
+      <button class="fetch-btn" id="fetch-btn" onclick="fetchArticle()">Analizuj →</button>
+    </div>
+  </div>
+
+  <!-- Step 2: Posts -->
+  <div class="input-group" id="posts-section" style="display:none">
+    <div class="section-label">2. Wybierz propozycję posta</div>
+    <div class="posts-list" id="posts-list"></div>
+  </div>
+
+  <!-- Step 3: Fanpage -->
+  <div class="input-group" id="fanpage-section" style="display:none">
+    <div class="section-label">3. Fanpage</div>
+    <div class="fanpage-select-wrap">
+      <select id="fanpage-select">
+        <option value="OnetWiadomosci" data-name="Onet Wiadomości">Onet Wiadomości</option>
+        <option value="przegladsportowy" data-name="Przegląd Sportowy">Przegląd Sportowy</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Step 4: Image upload -->
+  <div class="input-group" id="image-section" style="display:none">
+    <div class="section-label">4. Zdjęcie</div>
+    <label for="image-file-input" id="image-dropzone">
+      <div class="dropzone-icon">🖼️</div>
+      <div class="dropzone-text">Kliknij lub przeciągnij zdjęcie</div>
+      <div class="dropzone-hint">AVIF, JPG, PNG, WEBP</div>
+    </label>
+    <input type="file" id="image-file-input" accept="image/avif,image/jpeg,image/png,image/webp" style="display:none" onchange="applyUploadedImage(this)" />
+    <div style="font-size:11px;color:var(--muted);margin-top:6px" id="image-hint"></div>
+  </div>
+
+  <!-- Font size control -->
+  <div class="input-group" id="fontsize-section" style="display:none">
+    <div class="section-label">Rozmiar tekstu na grafice</div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <input type="range" id="font-slider" min="8" max="48" value="13"
+        oninput="updateFontSize(this.value)"
+        style="flex:1;accent-color:#ffd300;cursor:pointer" />
+      <span id="font-size-label" style="font-size:13px;font-weight:500;min-width:32px;text-align:right">13px</span>
+    </div>
+  </div>
+
+  <div id="status-msg" class="status-msg"></div>
+
+  <!-- Publish -->
+  <button class="publish-btn" id="publish-btn" disabled onclick="publish()">
+    Opublikuj na Facebooku
+  </button>
+</div>
+
+<!-- RIGHT: Preview -->
+<div class="right">
+  <div class="preview-label">Podgląd posta</div>
+
+  <div class="empty-state" id="empty-state">
+    <div class="empty-icon">📰</div>
+    <div>Wklej link do artykułu<br>i kliknij Analizuj</div>
+  </div>
+
+  <div class="fb-post" id="fb-preview" style="display:none">
+    <div class="fb-header">
+      <div class="fb-avatar" id="fb-avatar">O</div>
+      <div>
+        <div class="fb-page-name" id="fb-page-name">Onet Wiadomości</div>
+        <div class="fb-meta">Teraz · 🌐</div>
+      </div>
+    </div>
+    <div class="fb-copy" id="fb-copy">Wybierz post z listy...</div>
+    <div id="fb-graphic-wrap">
+      <div class="graphic-placeholder">Trwa ładowanie grafiki...</div>
+    </div>
+    <div class="fb-actions">
+      <div class="fb-action-btn">👍 Lubię to</div>
+      <div class="fb-action-btn">💬 Komentuj</div>
+      <div class="fb-action-btn">↗ Udostępnij</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const N8N_WEBHOOK = 'https://rasp.n8n.ringpublishing.com/webhook-test/ccb13c88-e2ee-4d06-a40b-7344600e4d2a';
+
+const DOMAIN_CONFIG = {
+  'wiadomosci.onet.pl': { fanpage: 'OnetWiadomosci', name: 'Onet Wiadomości', initials: 'OW', color: '#ffd300', textColor: '#1a1a1a' },
+  'przegladsportowy.onet.pl': { fanpage: 'przegladsportowy', name: 'Przegląd Sportowy', initials: 'PS', color: '#004b9a' },
+};
+
+const POST_TAGS = ['Faktyczny', 'Prowokacja', 'Ludzki kąt'];
+
+let state = {
+  url: '',
+  posts: [],
+  selectedPost: null,
+  imageUrl: null,
+  imageBase64: null,
+  domain: null,
+};
+
+function getDomain(url) {
+  try {
+    const host = new URL(url).hostname.replace('www.', '');
+    return Object.keys(DOMAIN_CONFIG).find(d => host.includes(d)) || null;
+  } catch { return null; }
+}
+
+async function fetchArticle() {
+  const url = document.getElementById('url-input').value.trim();
+  if (!url) return;
+
+  state.url = url;
+  state.domain = getDomain(url);
+
+  const fetchBtn = document.getElementById('fetch-btn');
+  const postsList = document.getElementById('posts-list');
+
+  fetchBtn.disabled = true;
+  fetchBtn.textContent = '...';
+
+  // Show shimmer
+  document.getElementById('posts-section').style.display = 'block';
+  postsList.innerHTML = '<div class="shimmer"></div><div class="shimmer" style="margin-top:10px"></div><div class="shimmer" style="margin-top:10px"></div>';
+
+  // Set fanpage based on domain
+  if (state.domain) {
+    const cfg = DOMAIN_CONFIG[state.domain];
+    const sel = document.getElementById('fanpage-select');
+    sel.value = cfg.fanpage;
+    updatePreviewFanpage(cfg);
+  }
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        system: `Jesteś generatorem postów na Facebooka dla redakcji.
+
+KROK 1: Pobierz stronę artykułu przez web_search z podanym URL. Przeszukaj HTML pod kątem głównego zdjęcia:
+- Szukaj w atrybucie "srcset" tagu <img> — weź URL przed pierwszą spacją (np. "https://cdn... 870w" → weź część przed " 870w")
+- Lub szukaj <link rel="preload" ... as="image"> — weź atrybut href
+- Priorytet: duże zdjęcie z domeny cdn.* lub img.*
+
+KROK 2: Napisz 3 posty na Facebooka.
+
+Zasady postów:
+- Maksymalnie 2 krótkie zdania
+- Ton: lekki, przystępny, głos redakcji
+- Struktura: haczyk + pytanie/prowokacja
+- 1-2 emoji, 2-3 hashtagi
+- Post 1: faktyczny z pytaniem, Post 2: prowokacja, Post 3: ludzki kąt
+- Brzmi jak człowiek, nie AI
+
+Twoja odpowiedź musi być WYŁĄCZNIE obiektem JSON — żadnego tekstu przed ani po, żadnych wyjaśnień:
+{"posts": ["post1", "post2", "post3"], "image_url": "pelny_URL_zdjecia_lub_null"}`,
+        messages: [{ role: 'user', content: `Pobierz artykuł i wyciągnij URL głównego zdjęcia z HTML (srcset lub preload), potem napisz 3 posty. URL artykułu: ${url}` }]
+      })
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error?.message || 'Błąd API');
+
+    const text = data.content.filter(b => b.type === 'text').map(b => b.text).join('');
+    // Extract JSON even if Claude added extra text around it
+    const jsonMatch = text.match(/\{[\s\S]*"posts"[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('Claude nie zwrócił danych w oczekiwanym formacie. Spróbuj ponownie.');
+    const parsed = JSON.parse(jsonMatch[0]);
+
+    state.posts = parsed.posts;
+    state.imageUrl = parsed.image_url || null;
+
+    renderPosts();
+    if (state.imageUrl) {
+      loadImageBase64(state.imageUrl);
+    } else {
+      // Will be shown after post selection in updatePreviewGraphic
+    }
+
+    document.getElementById('fanpage-section').style.display = 'block';
+    document.getElementById('empty-state').style.display = 'none';
+    document.getElementById('fb-preview').style.display = 'block';
+
+  } catch (err) {
+    postsList.innerHTML = `<div style="color:#c0392b;font-size:14px;padding:12px">Błąd: ${err.message}</div>`;
+  } finally {
+    fetchBtn.disabled = false;
+    fetchBtn.textContent = 'Analizuj →';
+  }
+}
+
+function renderPosts() {
+  const list = document.getElementById('posts-list');
+  list.innerHTML = '';
+  state.posts.forEach((post, i) => {
+    const el = document.createElement('div');
+    el.className = 'post-option';
+    el.innerHTML = `
+      <div class="post-option-tag">Post ${i+1} — ${POST_TAGS[i]}</div>
+      <div class="post-option-text">${escHtml(post)}</div>
+      <div class="check">✓</div>
+    `;
+    el.onclick = () => selectPost(i);
+    list.appendChild(el);
+  });
+}
+
+function selectPost(idx) {
+  state.selectedPost = idx;
+  document.querySelectorAll('.post-option').forEach((el, i) => {
+    el.classList.toggle('selected', i === idx);
+  });
+  document.getElementById('publish-btn').disabled = false;
+  updatePreviewCopy();
+  updatePreviewGraphic();
+}
+
+function updatePreviewCopy() {
+  if (state.selectedPost === null) return;
+  const post = state.posts[state.selectedPost];
+  const copyEl = document.getElementById('fb-copy');
+  copyEl.innerHTML = escHtml(post) + `\n\nWięcej informacji znajdziesz w linku: <span class="fb-link">${escHtml(state.url)}</span>`;
+}
+
+function updatePreviewGraphic() {
+  const wrap = document.getElementById('fb-graphic-wrap');
+  const question = state.selectedPost !== null ? extractQuestion(state.posts[state.selectedPost]) : '';
+
+  if (state.imageUrl) {
+    wrap.innerHTML = `
+      <div class="fb-graphic">
+        <img referrerpolicy="no-referrer" src="${escHtml(state.imageUrl)}" alt=""
+          onload="document.getElementById('image-section').style.display='none'"
+          onerror="onImageError()" />
+        <div class="graphic-overlay">
+          <div class="graphic-question">${escHtml(question)}</div>
+        </div>
+      </div>`;
+  } else {
+    // No image found automatically — show manual input
+    showImageFallback('Wgraj zdjęcie ręcznie.');
+    wrap.innerHTML = `
+      <div class="fb-graphic" style="background:#111">
+        <div class="graphic-overlay" style="background:linear-gradient(to top,rgba(0,0,0,0.9),rgba(0,0,0,0.4))">
+          <div class="graphic-question">${escHtml(question)}</div>
+        </div>
+      </div>`;
+  }
+}
+
+function onImageError() {
+  showImageFallback('Wgraj zdjęcie ręcznie.');
+  // Keep graphic with dark background
+  const wrap = document.getElementById('fb-graphic-wrap');
+  const question = state.selectedPost !== null ? extractQuestion(state.posts[state.selectedPost]) : '';
+  wrap.innerHTML = `
+    <div class="fb-graphic" style="background:#111">
+      <div class="graphic-overlay" style="background:linear-gradient(to top,rgba(0,0,0,0.9),rgba(0,0,0,0.4))">
+        <div class="graphic-question">${escHtml(question)}</div>
+      </div>
+    </div>`;
+}
+
+function showImageFallback(hint) {
+  const section = document.getElementById('image-section');
+  section.style.display = 'block';
+  document.getElementById('image-hint').textContent = hint;
+}
+
+function applyUploadedImage(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const dataUrl = e.target.result;
+    state.imageBase64 = dataUrl.split(',')[1];
+    state.imageUrl = null; // using base64, not URL
+
+    // Update dropzone appearance
+    const dz = document.getElementById('image-dropzone');
+    dz.classList.add('has-image');
+    const shortName = file.name.length > 40 ? file.name.substring(0, 40) + '…' : file.name;
+    dz.querySelector('.dropzone-text').textContent = shortName;
+    dz.querySelector('.dropzone-icon').textContent = '✓';
+
+    // Show font size control
+    document.getElementById('fontsize-section').style.display = 'block';
+
+    // Update preview
+    const wrap = document.getElementById('fb-graphic-wrap');
+    const question = state.selectedPost !== null ? extractQuestion(state.posts[state.selectedPost]) : '';
+    wrap.innerHTML = `
+      <div class="fb-graphic" id="pan-graphic">
+        <img src="${dataUrl}" alt="" id="pan-img" />
+        <div class="graphic-overlay">
+          <div class="graphic-question">${escHtml(question)}</div>
+        </div>
+        <div class="pan-hint" id="pan-hint">✥ Przeciągnij aby kadrować</div>
+      </div>`;
+    initPan();
+    // Apply current font size
+    const sliderVal = document.getElementById('font-slider').value;
+    setTimeout(() => updateFontSize(sliderVal), 50);
+  };
+  reader.readAsDataURL(file);
+}
+
+function extractQuestion(post) {
+  const clean = (str) => str
+    .replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}]/gu, '')
+    .replace(/#\S+/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const sentences = post.split(/(?<=[.!?])\s+/);
+  const q = sentences.find(s => s.includes('?'));
+  return q ? clean(q) : clean(post.split(/[.!?]/)[0]);
+}
+
+function updatePreviewFanpage(cfg) {
+  document.getElementById('fb-avatar').textContent = cfg.initials;
+  document.getElementById('fb-avatar').style.background = cfg.color;
+  document.getElementById('fb-avatar').style.color = cfg.textColor || 'white';
+  document.getElementById('fb-page-name').textContent = cfg.name;
+}
+
+async function loadImageBase64(url) {
+  // base64 for n8n — best-effort, CORS may block some domains
+  try {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    const reader = new FileReader();
+    reader.onload = () => { state.imageBase64 = reader.result.split(',')[1]; };
+    reader.readAsDataURL(blob);
+  } catch { 
+    // CORS blocked — n8n will use image_url instead
+    state.imageBase64 = null; 
+  }
+}
+
+document.getElementById('fanpage-select').addEventListener('change', function() {
+  const val = this.value;
+  const cfg = Object.values(DOMAIN_CONFIG).find(c => c.fanpage === val);
+  if (cfg) updatePreviewFanpage(cfg);
+});
+
+async function publish() {
+  if (state.selectedPost === null) return;
+
+  const btn = document.getElementById('publish-btn');
+  const statusEl = document.getElementById('status-msg');
+  const sel = document.getElementById('fanpage-select');
+  const selectedOption = sel.options[sel.selectedIndex];
+  const fanpageName = selectedOption.text;
+  const fanpageId = sel.value;
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Publikowanie...';
+  statusEl.className = 'status-msg';
+  statusEl.style.display = 'none';
+
+  const post = state.posts[state.selectedPost];
+  const copyText = post + `\n\nWięcej informacji znajdziesz w linku: ${state.url}`;
+  const question = extractQuestion(post);
+
+  const payload = {
+    article_url: state.url,
+    post_copy: copyText,
+    question_for_graphic: question,
+    fanpage_id: fanpageId,
+    fanpage_name: fanpageName,
+    image_url: state.imageUrl || null,
+    image_base64: state.imageBase64 || null,
+    image_source: state.imageBase64 ? 'upload' : (state.imageUrl ? 'url' : null),
+    post_index: state.selectedPost,
+    post_tag: POST_TAGS[state.selectedPost],
+    timestamp: new Date().toISOString(),
+  };
+
+  try {
+    const res = await fetch(N8N_WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (res.ok) {
+      statusEl.textContent = '✓ Post wysłany do n8n! Publikacja w toku.';
+      statusEl.className = 'status-msg success';
+    } else {
+      throw new Error(`HTTP ${res.status}`);
+    }
+  } catch (err) {
+    statusEl.textContent = `Błąd wysyłki: ${err.message}`;
+    statusEl.className = 'status-msg error';
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = 'Opublikuj na Facebooku';
+  }
+}
+
+function updateFontSize(val) {
+  document.getElementById('font-size-label').textContent = val + 'px';
+  const q = document.querySelector('.graphic-question');
+  if (q) q.style.fontSize = val + 'px';
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+document.getElementById('url-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') fetchArticle();
+});
+
+// ── Pan / crop logic (object-position based) ─────
+let panState = { posX: 50, posY: 50, startX: 0, startY: 0, dragging: false };
+
+function initPan() {
+  panState = { posX: 50, posY: 50, startX: 0, startY: 0, dragging: false };
+  const container = document.getElementById('pan-graphic');
+  const img = document.getElementById('pan-img');
+  if (!container || !img) return;
+
+  img.style.objectPosition = '50% 50%';
+
+  setTimeout(() => {
+    const hint = document.getElementById('pan-hint');
+    if (hint) hint.style.opacity = '0';
+  }, 2500);
+
+  // Attach to container so overlay clicks also work
+  container.addEventListener('mousedown', startDrag);
+  container.addEventListener('touchstart', startDragTouch, { passive: false });
+  window.addEventListener('mousemove', onDrag);
+  window.addEventListener('touchmove', onDragTouch, { passive: false });
+  window.addEventListener('mouseup', endDrag);
+  window.addEventListener('touchend', endDrag);
+}
+
+function startDrag(e) {
+  e.preventDefault();
+  panState.dragging = true;
+  panState.startX = e.clientX;
+  panState.startY = e.clientY;
+  const container = document.getElementById('pan-graphic');
+  if (container) container.classList.add('dragging');
+}
+
+function startDragTouch(e) {
+  e.preventDefault();
+  panState.dragging = true;
+  panState.startX = e.touches[0].clientX;
+  panState.startY = e.touches[0].clientY;
+}
+
+function onDrag(e) {
+  if (!panState.dragging) return;
+  const dx = e.clientX - panState.startX;
+  const dy = e.clientY - panState.startY;
+  panState.startX = e.clientX;
+  panState.startY = e.clientY;
+  applyPan(dx, dy);
+}
+
+function onDragTouch(e) {
+  if (!panState.dragging) return;
+  e.preventDefault();
+  const dx = e.touches[0].clientX - panState.startX;
+  const dy = e.touches[0].clientY - panState.startY;
+  panState.startX = e.touches[0].clientX;
+  panState.startY = e.touches[0].clientY;
+  applyPan(dx, dy);
+}
+
+function endDrag() {
+  panState.dragging = false;
+  const container = document.getElementById('pan-graphic');
+  if (container) container.classList.remove('dragging');
+}
+
+function applyPan(dx, dy) {
+  const img = document.getElementById('pan-img');
+  if (!img) return;
+  // Convert pixel delta to percentage (sensitivity factor 0.15)
+  panState.posX = Math.min(100, Math.max(0, panState.posX - dx * 0.15));
+  panState.posY = Math.min(100, Math.max(0, panState.posY - dy * 0.15));
+  img.style.objectPosition = `${panState.posX}% ${panState.posY}%`;
+}
+// ─────────────────────────────────────────────────
+</script>
+</body>
+</html>

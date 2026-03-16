@@ -3,363 +3,255 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="referrer" content="no-referrer">
 <title>Post Publisher</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&family=Fira+Sans:wght@700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&family=Fira+Sans:wght@700;800&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #f4f3ef;
+  --bg: #f0ede8;
   --surface: #ffffff;
-  --border: #e0ddd6;
-  --text: #1a1a1a;
-  --muted: #888;
   --accent: #ffd300;
-  --accent-hover: #e6be00;
-  --success: #1a7a3f;
-  --radius: 16px;
+  --dark: #1a1a1a;
+  --muted: #888;
+  --border: #e0ddd8;
+  --radius: 14px;
 }
 
 body {
   background: var(--bg);
-  color: var(--text);
   font-family: 'DM Sans', sans-serif;
+  color: var(--dark);
   min-height: 100vh;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0;
-}
-
-/* LEFT PANEL */
-.left {
-  padding: 48px 40px;
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-  border-right: 1px solid var(--border);
-  min-height: 100vh;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 4px;
-}
-
-.logo-dot {
-  width: 10px; height: 10px;
-  background: var(--accent);
-  border-radius: 50%;
-}
-
-.logo-text {
-  font-family: 'Syne', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--muted);
+  padding: 32px 16px 60px;
 }
 
 h1 {
   font-family: 'Syne', sans-serif;
-  font-size: 32px;
+  font-size: 22px;
   font-weight: 800;
-  line-height: 1.1;
   letter-spacing: -0.5px;
+  margin-bottom: 24px;
+}
+
+.layout {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 860px) {
+  .layout { grid-template-columns: 1fr; }
+}
+
+.panel {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .section-label {
+  font-family: 'Syne', sans-serif;
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 700;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--muted);
   margin-bottom: 8px;
 }
 
-.input-group {
-  display: flex;
-  flex-direction: column;
-}
+.url-row { display: flex; gap: 8px; }
 
-input[type="url"], select {
-  background: var(--surface);
+input[type="url"], input[type="text"], textarea, select {
+  width: 100%;
   border: 1.5px solid var(--border);
-  border-radius: 12px;
-  color: var(--text);
+  border-radius: 10px;
+  padding: 10px 14px;
   font-family: 'DM Sans', sans-serif;
-  font-size: 15px;
-  padding: 13px 16px;
+  font-size: 13px;
+  color: var(--dark);
+  background: var(--bg);
   outline: none;
   transition: border-color 0.2s;
-  width: 100%;
 }
+input[type="url"]:focus, input[type="text"]:focus,
+textarea:focus, select:focus { border-color: var(--accent); }
 
-input[type="url"]:focus, select:focus {
-  border-color: var(--accent);
-}
-
-input::placeholder { color: var(--muted); }
-
-.url-row { display: flex; gap: 10px; }
+select { cursor: pointer; }
 
 .fetch-btn {
-  background: var(--text);
-  color: #fff;
+  background: var(--accent);
+  color: var(--dark);
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
+  padding: 10px 18px;
   font-family: 'Syne', sans-serif;
-  font-size: 13px;
   font-weight: 700;
-  padding: 13px 20px;
+  font-size: 13px;
   cursor: pointer;
   white-space: nowrap;
-  transition: background 0.2s, transform 0.1s;
+  flex-shrink: 0;
+  transition: opacity 0.2s;
 }
-.fetch-btn:hover:not(:disabled) { background: #333; }
-.fetch-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.fetch-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-/* Posts selector */
-.posts-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+/* Posts */
+.posts-list { display: flex; flex-direction: column; gap: 8px; }
 
-.post-option {
-  background: var(--surface);
+.post-item {
   border: 1.5px solid var(--border);
-  border-radius: 12px;
-  padding: 14px 16px;
-  cursor: pointer;
-  transition: border-color 0.2s, background 0.2s;
-  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.2s;
 }
+.post-item.selected { border-color: var(--accent); }
 
-.post-option:hover { border-color: #ccc; }
-.post-option.selected { border-color: var(--accent); background: #fffbe6; }
-
-.post-option-tag {
+.post-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  background: var(--bg);
+  user-select: none;
+}
+.post-tag {
+  font-family: 'Syne', sans-serif;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 6px;
-}
-
-.post-option.selected .post-option-tag { color: #b39600; }
-
-.post-option-text {
-  font-size: 14px;
-  line-height: 1.55;
-  white-space: pre-wrap;
-}
-
-.post-option .check {
-  position: absolute;
-  top: 12px; right: 14px;
-  width: 20px; height: 20px;
-  border-radius: 50%;
-  border: 2px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px;
-  transition: all 0.2s;
-}
-
-.post-option.selected .check {
   background: var(--accent);
-  border-color: var(--accent);
-  color: white;
+  color: var(--dark);
+  padding: 2px 8px;
+  border-radius: 20px;
+  flex-shrink: 0;
 }
-
-/* Fanpage selector */
-.fanpage-select-wrap { position: relative; }
-.fanpage-select-wrap::after {
-  content: '▾';
-  position: absolute;
-  right: 14px; top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-  color: var(--muted);
+.post-tag.empty { background: #e0ddd8; color: var(--muted); }
+.post-preview-text {
   font-size: 12px;
-}
-select { appearance: none; padding-right: 36px; }
-
-/* Publish btn */
-.publish-btn {
-  background: var(--accent);
-  color: #1a1a1a;
-  border: none;
-  border-radius: 12px;
-  font-family: 'Syne', sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-  padding: 16px;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
-  width: 100%;
-  margin-top: auto;
-}
-.publish-btn:hover:not(:disabled) { background: var(--accent-hover); }
-.publish-btn:active:not(:disabled) { transform: scale(0.99); }
-.publish-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-
-.status-msg {
-  font-size: 13px;
-  text-align: center;
-  padding: 10px;
-  border-radius: 10px;
-  display: none;
-}
-.status-msg.success { background: #e8f5ee; color: var(--success); display: block; }
-.status-msg.error { background: #fdecea; color: #c0392b; display: block; }
-
-/* Spinner */
-.spinner {
-  width: 16px; height: 16px;
-  border: 2px solid rgba(255,255,255,0.3);
-  border-top-color: white;
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-  display: inline-block;
-  vertical-align: middle;
-  margin-right: 8px;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* Loading shimmer */
-.shimmer {
-  background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.2s infinite;
-  border-radius: 8px;
-  height: 90px;
-}
-@keyframes shimmer { to { background-position: -200% 0; } }
-
-/* RIGHT PANEL — Preview */
-.right {
-  padding: 48px 40px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  background: #ece9e3;
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  overflow-y: auto;
-}
-
-.preview-label {
-  font-family: 'Syne', sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
   color: var(--muted);
+  white-space: normal;
+  line-height: 1.5;
+  flex: 1;
 }
-
-/* FB Post Mock */
-.fb-post {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-  overflow: hidden;
-  font-family: 'DM Sans', sans-serif;
+.post-textarea {
+  display: none;
+  width: 100%;
+  border: none;
+  border-top: 1.5px solid var(--border);
+  border-radius: 0;
+  padding: 12px;
+  font-size: 13px;
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 90px;
+  background: var(--surface);
 }
+.post-item.selected .post-textarea { display: block; }
 
-.fb-header {
+/* Image dropzone */
+.image-dropzone {
+  border: 2px dashed var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+.image-dropzone:hover, .image-dropzone.dragover { border-color: var(--accent); background: #fffbe6; }
+.image-dropzone.has-image { border-style: solid; border-color: var(--accent); }
+.dropzone-icon { font-size: 24px; margin-bottom: 6px; }
+.dropzone-text { font-size: 12px; color: var(--muted); }
+
+/* Font size */
+.fontsize-row {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 14px 16px 10px;
+  gap: 12px;
+}
+.fontsize-row input[type=range] {
+  flex: 1; border: none; padding: 0; background: none;
+  accent-color: var(--accent);
+}
+.fontsize-val {
+  font-family: 'Syne', sans-serif;
+  font-size: 12px; font-weight: 700;
+  min-width: 32px; text-align: right;
 }
 
+/* Download button */
+.download-btn {
+  background: var(--dark);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 13px 20px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  width: 100%;
+  transition: opacity 0.2s;
+}
+.download-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* FB Post preview */
+.fb-post {
+  background: white;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.fb-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 16px 8px;
+}
 .fb-avatar {
   width: 40px; height: 40px;
   border-radius: 50%;
   background: var(--accent);
   display: flex; align-items: center; justify-content: center;
-  color: #1a1a1a;
-  font-weight: 700;
-  font-size: 14px;
-  flex-shrink: 0;
+  font-weight: 700; font-size: 14px; flex-shrink: 0;
 }
-
-.fb-page-name {
-  font-weight: 700;
-  font-size: 14px;
-  line-height: 1.2;
-}
-
-.fb-meta {
-  font-size: 12px;
-  color: var(--muted);
-}
-
+.fb-page-name { font-weight: 700; font-size: 14px; }
+.fb-meta { font-size: 12px; color: var(--muted); }
 .fb-copy {
   padding: 0 16px 12px;
-  font-size: 14px;
-  line-height: 1.6;
-  white-space: pre-wrap;
-  color: #1c1e21;
+  font-size: 14px; line-height: 1.6;
+  white-space: pre-wrap; color: #1c1e21;
   min-height: 40px;
 }
 
-.fb-copy .fb-link {
-  color: #1877F2;
-}
-
-/* Graphic preview */
+/* Graphic */
 .fb-graphic {
   width: 100%;
-  aspect-ratio: 1;
+  aspect-ratio: 1 !important;
   background: #1a1a1a;
   position: relative;
   overflow: hidden;
   cursor: grab;
-  user-select: none;
-  -webkit-user-select: none;
+  user-select: none; -webkit-user-select: none;
 }
 .fb-graphic.dragging { cursor: grabbing; }
-.fb-graphic * { user-select: none; -webkit-user-select: none; pointer-events: none; }
-.fb-graphic img { pointer-events: none; }
+.fb-graphic > * { pointer-events: none; user-select: none; -webkit-user-select: none; }
 
 .fb-graphic img {
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
   object-fit: cover;
   object-position: 50% 50%;
   display: block;
-  user-select: none;
-  transition: none;
-  max-width: none;
-}
-.pan-hint {
-  position: absolute;
-  top: 10px; left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0,0,0,0.55);
-  color: white;
-  font-size: 11px;
-  padding: 4px 10px;
-  border-radius: 20px;
-  pointer-events: none;
-  white-space: nowrap;
-  opacity: 1;
-  transition: opacity 0.5s;
 }
 
 .graphic-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 60%);
-  display: flex;
-  flex-direction: column;
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.15) 55%, transparent 100%);
+  display: flex; flex-direction: column;
   justify-content: flex-end;
   padding: 20px;
 }
@@ -367,655 +259,670 @@ select { appearance: none; padding-right: 36px; }
 .graphic-question {
   color: white;
   font-family: 'Fira Sans', sans-serif;
-  font-size: 14px;
-  font-weight: 800;
+  font-size: 14px; font-weight: 800;
   line-height: 1.3;
   text-shadow: 0 2px 6px rgba(0,0,0,0.8);
   text-transform: uppercase;
 }
 
+/* Author — vertical, top right, FIXED to wrapper not image */
+.graphic-author {
+  position: absolute;
+  top: 8px; right: 0;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px; font-weight: 500;
+  color: rgba(255,255,255,0.85);
+  background: rgba(0,0,0,0.35);
+  padding: 6px 4px;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+.pan-hint {
+  position: absolute;
+  top: 10px; left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.55);
+  color: white; font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+  opacity: 1; transition: opacity 0.6s;
+}
+
 .graphic-placeholder {
-  width: 100%;
-  aspect-ratio: 1;
+  width: 100%; aspect-ratio: 1;
   background: #2a2a2a;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #555;
-  font-size: 13px;
+  display: flex; align-items: center; justify-content: center;
+  color: #555; font-size: 13px;
 }
 
 .fb-actions {
   padding: 8px 16px 14px;
-  display: flex;
-  gap: 4px;
+  display: flex; gap: 4px;
 }
 .fb-action-btn {
-  flex: 1;
-  background: none;
-  border: none;
-  border-radius: 6px;
+  flex: 1; text-align: center;
+  font-size: 13px; color: var(--muted);
   padding: 8px 4px;
-  font-size: 13px;
-  font-weight: 500;
-  color: #65676b;
-  cursor: default;
-  text-align: center;
+  border-radius: 6px;
+  background: var(--bg);
+  font-weight: 600;
 }
 
-.empty-state {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: var(--muted);
-  text-align: center;
-  gap: 12px;
+.shimmer {
+  height: 70px; border-radius: 10px;
+  background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite;
 }
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 
-.empty-icon {
-  font-size: 40px;
-  opacity: 0.3;
+.hint-text {
+  font-size: 11px; color: var(--muted);
+  margin-top: 6px;
 }
-
-.bookmarklet-bar {
-  background: #fffbe6;
-  border: 1.5px dashed #e6c800;
-  border-radius: 14px;
-  padding: 14px 18px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-.bookmarklet-bar p {
-  font-size: 12px;
-  color: var(--muted);
-  line-height: 1.4;
-}
-.bm-btn {
-  background: var(--accent);
-  color: #1a1a1a;
-  font-family: 'Syne', sans-serif;
-  font-weight: 700;
-  font-size: 13px;
-  padding: 9px 16px;
-  border-radius: 10px;
-  text-decoration: none;
-  white-space: nowrap;
-  cursor: grab;
-  flex-shrink: 0;
-}
-@media (max-width: 900px) {
-  body { grid-template-columns: 1fr; }
-  .right { position: static; height: auto; }
-}
-
-.dropzone-icon { font-size: 28px; margin-bottom: 6px; }
-.dropzone-text { font-size: 14px; font-weight: 500; color: var(--text); }
-.dropzone-hint { font-size: 11px; color: var(--muted); margin-top: 3px; }
-#image-dropzone {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border: 2px dashed var(--border);
-  border-radius: 12px;
-  padding: 24px 16px;
-  cursor: pointer;
-  transition: border-color 0.2s, background 0.2s;
-  text-align: center;
-}
-#image-dropzone:hover { border-color: var(--accent); background: #fffbe6; }
-#image-dropzone.has-image { border-style: solid; border-color: var(--accent); background: #fffbe6; }
 </style>
 </head>
 <body>
 
-<!-- LEFT: Controls -->
-<div class="left">
-  <div>
-    
-    <h1>Opublikuj post<br>na Facebooku</h1>
-  </div>
+<div class="layout">
 
-  <!-- Step 1: URL -->
-  <div class="bookmarklet-bar">
-    <p>Będąc na artykule kliknij zakładkę — apka wypełni się automatycznie.</p>
-    <a class="bm-btn" href="javascript:(function(){var url=encodeURIComponent(location.href);var img='';var preload=document.querySelector('link[rel="preload"][as="image"]');if(preload)img=encodeURIComponent(preload.href);if(!img){var s=document.querySelector('img[srcset]');if(s){var m=(s.getAttribute('srcset')||'').match(/https?:[^\s,]+/);if(m)img=encodeURIComponent(m[0]);}}if(!img){var og=document.querySelector('meta[property="og:image"]');if(og)img=encodeURIComponent(og.content);}location.href='https://arkadiuszgondek.github.io/generator-postow/?url='+url+'&img='+img;})();">📰 Publikuj</a>
-  </div>
-
-  <div class="input-group">
-    <div class="section-label">1. Link do artykułu</div>
-    <div class="url-row">
-      <input type="url" id="url-input" placeholder="https://wiadomosci.onet.pl/..." />
-      <button class="fetch-btn" id="fetch-btn" onclick="fetchArticle()">Analizuj →</button>
-    </div>
-  </div>
-
-  <!-- Step 2: Posts -->
-  <div class="input-group" id="posts-section" style="display:none">
-    <div class="section-label">2. Wybierz propozycję posta</div>
-    <div class="posts-list" id="posts-list"></div>
-  </div>
-
-  <!-- Step 3: Fanpage -->
-  <div class="input-group" id="fanpage-section" style="display:none">
-    <div class="section-label">3. Fanpage</div>
-    <div class="fanpage-select-wrap">
-      <select id="fanpage-select">
-        <option value="OnetWiadomosci" data-name="Onet Wiadomości">Onet Wiadomości</option>
-        <option value="przegladsportowy" data-name="Przegląd Sportowy">Przegląd Sportowy</option>
-      </select>
-    </div>
-  </div>
-
-  <!-- Step 4: Image upload -->
-  <div class="input-group" id="image-section" style="display:none">
-    <div class="section-label">4. Zdjęcie</div>
-    <label for="image-file-input" id="image-dropzone">
-      <div class="dropzone-icon">🖼️</div>
-      <div class="dropzone-text">Kliknij lub przeciągnij zdjęcie</div>
-      <div class="dropzone-hint">AVIF, JPG, PNG, WEBP</div>
-    </label>
-    <input type="file" id="image-file-input" accept="image/avif,image/jpeg,image/png,image/webp" style="display:none" onchange="applyUploadedImage(this)" />
-    <div style="font-size:11px;color:var(--muted);margin-top:6px" id="image-hint"></div>
-  </div>
-
-  <!-- Font size control -->
-  <div class="input-group" id="fontsize-section" style="display:none">
-    <div class="section-label">Rozmiar tekstu na grafice</div>
-    <div style="display:flex;align-items:center;gap:12px">
-      <input type="range" id="font-slider" min="8" max="48" value="13"
-        oninput="updateFontSize(this.value)"
-        style="flex:1;accent-color:#ffd300;cursor:pointer" />
-      <span id="font-size-label" style="font-size:13px;font-weight:500;min-width:32px;text-align:right">13px</span>
-    </div>
-  </div>
-
-  <div id="status-msg" class="status-msg"></div>
-
-  <!-- Publish -->
-  <button class="publish-btn" id="publish-btn" disabled onclick="publish()">
-    Opublikuj na Facebooku
-  </button>
+  <!-- LEFT: Controls -->
+  <div class="panel">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px">
+  <h1 style="margin-bottom:0">Post Publisher</h1>
+  <span style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;background:var(--dark);color:var(--accent);padding:3px 8px;border-radius:20px">BETA</span>
 </div>
 
-<!-- RIGHT: Preview -->
-<div class="right">
-  <div class="preview-label">Podgląd posta</div>
-
-  <div class="empty-state" id="empty-state">
-    <div class="empty-icon">📰</div>
-    <div>Wklej link do artykułu<br>i kliknij Analizuj</div>
-  </div>
-
-  <div class="fb-post" id="fb-preview" style="display:none">
-    <div class="fb-header">
-      <div class="fb-avatar" id="fb-avatar">O</div>
-      <div>
-        <div class="fb-page-name" id="fb-page-name">Onet Wiadomości</div>
-        <div class="fb-meta">Teraz · 🌐</div>
+    <!-- 1. URL -->
+    <div>
+      <div class="section-label">1. Link do artykułu</div>
+      <div class="url-row">
+        <input type="url" id="url-input" placeholder="https://wiadomosci.onet.pl/..." />
+        <button class="fetch-btn" id="fetch-btn" onclick="fetchArticle()">Analizuj →</button>
       </div>
     </div>
-    <div class="fb-copy" id="fb-copy">Wybierz post z listy...</div>
-    <div id="fb-graphic-wrap">
-      <div class="graphic-placeholder">Trwa ładowanie grafiki...</div>
+
+    <!-- 2. Posts -->
+    <div id="posts-section" style="display:none">
+      <div class="section-label">2. Wybierz i edytuj zajawkę</div>
+      <div class="posts-list" id="posts-list"></div>
     </div>
-    <div class="fb-actions">
-      <div class="fb-action-btn">👍 Lubię to</div>
-      <div class="fb-action-btn">💬 Komentuj</div>
-      <div class="fb-action-btn">↗ Udostępnij</div>
+
+    <!-- 3. Fanpage -->
+    <div id="fanpage-section" style="display:none">
+      <div class="section-label">3. Fanpage</div>
+      <select id="fanpage-select">
+        <option value="OnetWiadomosci">Onet Wiadomości</option>
+        <option value="przegladsportowy">Przegląd Sportowy</option>
+      </select>
+    </div>
+
+    <!-- 4. Image -->
+    <div id="image-section" style="display:none">
+      <div class="section-label">4. Zdjęcie</div>
+      <div class="image-dropzone" id="image-dropzone"
+        onclick="document.getElementById('image-file-input').click()"
+        ondragover="event.preventDefault();this.classList.add('dragover')"
+        ondragleave="this.classList.remove('dragover')"
+        ondrop="handleDrop(event)">
+        <div class="dropzone-icon">📷</div>
+        <div class="dropzone-text">Kliknij lub przeciągnij zdjęcie</div>
+        <input type="file" id="image-file-input" accept="image/avif,image/jpeg,image/png,image/webp"
+          style="display:none" onchange="applyUploadedImage(this)" />
+      </div>
+      <div class="hint-text" id="image-hint"></div>
+    </div>
+
+    <!-- 5. Author -->
+    <div id="author-section" style="display:none">
+      <div class="section-label">5. Autor zdjęcia</div>
+      <input type="text" id="author-input" placeholder="np. Jan Kowalski / PAP" oninput="updateAuthor()" />
+    </div>
+
+    <!-- 6. Font size -->
+    <div id="fontsize-section" style="display:none">
+      <div class="section-label">6. Rozmiar tekstu na grafice</div>
+      <div class="fontsize-row">
+        <span style="font-size:11px">A</span>
+        <input type="range" id="font-slider" min="8" max="48" value="14"
+          oninput="updateFontSize(this.value)">
+        <span style="font-size:17px">A</span>
+        <span class="fontsize-val" id="font-val">14px</span>
+      </div>
+    </div>
+
+    <!-- 7. Download -->
+    <div id="download-section" style="display:none">
+      <button class="download-btn" id="download-btn" onclick="downloadGraphic()" disabled>
+        ⬇ Pobierz grafikę
+      </button>
     </div>
   </div>
+
+  <!-- RIGHT: Preview -->
+  <div class="panel" style="padding:0;overflow:hidden">
+    <div id="empty-state" style="padding:60px 24px;text-align:center;color:var(--muted);font-size:13px">
+      Wklej link do artykułu i kliknij Analizuj
+    </div>
+    <div class="fb-post" id="fb-preview" style="display:block">
+      <div class="fb-header">
+        <div class="fb-avatar" id="fb-avatar">OW</div>
+        <div>
+          <div class="fb-page-name" id="fb-page-name">Onet Wiadomości</div>
+          <div class="fb-meta">Teraz · 🌐</div>
+        </div>
+      </div>
+      <div class="fb-copy" id="fb-copy">Wybierz zajawkę z listy...</div>
+      <div id="fb-graphic-wrap">
+        <div class="graphic-placeholder">Wgraj zdjęcie aby zobaczyć podgląd</div>
+      </div>
+      <div class="fb-actions">
+        <div class="fb-action-btn">👍 Lubię to</div>
+        <div class="fb-action-btn">💬 Komentuj</div>
+        <div class="fb-action-btn">↗ Udostępnij</div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script>
-const N8N_WEBHOOK = 'https://rasp.n8n.ringpublishing.com/webhook-test/ccb13c88-e2ee-4d06-a40b-7344600e4d2a';
-
-const DOMAIN_CONFIG = {
-  'wiadomosci.onet.pl': { fanpage: 'OnetWiadomosci', name: 'Onet Wiadomości', initials: 'OW', color: '#ffd300', textColor: '#1a1a1a' },
-  'przegladsportowy.onet.pl': { fanpage: 'przegladsportowy', name: 'Przegląd Sportowy', initials: 'PS', color: '#004b9a' },
+const FANPAGES = {
+  OnetWiadomosci: { name: 'Onet Wiadomości', color: '#ffd300', initial: 'OW' },
+  przegladsportowy: { name: 'Przegląd Sportowy', color: '#004b9a', initial: 'PS' },
 };
-
-const POST_TAGS = ['Faktyczny', 'Prowokacja', 'Ludzki kąt'];
+const POST_TAGS = ['Faktyczny', 'Prowokacja', 'Ludzki kąt', 'Własny'];
 
 let state = {
   url: '',
-  posts: [],
+  posts: ['', '', '', ''],
   selectedPost: null,
-  imageUrl: null,
-  imageBase64: null,
-  imageMime: 'image/jpeg',
-  domain: null,
+  imageDataUrl: null,
+  author: '',
 };
 
-function getDomain(url) {
-  try {
-    const host = new URL(url).hostname.replace('www.', '');
-    return Object.keys(DOMAIN_CONFIG).find(d => host.includes(d)) || null;
-  } catch { return null; }
+// ── Pan / drag to crop ─────────────────────────
+let pan = { x: 50, y: 50, startX: 0, startY: 0, active: false };
+let panInited = false;
+
+function initPan() {
+  pan = { x: 50, y: 50, startX: 0, startY: 0, active: false };
+  const img = document.getElementById('pan-img');
+  if (img) img.style.objectPosition = '50% 50%';
+  setTimeout(() => {
+    const h = document.getElementById('pan-hint');
+    if (h) h.style.opacity = '0';
+  }, 2500);
+  if (!panInited) {
+    document.addEventListener('mousedown', panDown);
+    document.addEventListener('touchstart', panTouchDown, { passive: false });
+    window.addEventListener('mousemove', panMove);
+    window.addEventListener('touchmove', panTouchMove, { passive: false });
+    window.addEventListener('mouseup', panUp);
+    window.addEventListener('touchend', panUp);
+    panInited = true;
+  }
 }
 
-function generatePostsFromUrl(url) {
-  // Extract readable title from URL slug
+function panDown(e) {
+  if (!e.target.closest('#pan-graphic')) return;
+  e.preventDefault();
+  pan.active = true; pan.startX = e.clientX; pan.startY = e.clientY;
+  document.getElementById('pan-graphic')?.classList.add('dragging');
+}
+function panTouchDown(e) {
+  if (!e.target.closest('#pan-graphic')) return;
+  e.preventDefault();
+  pan.active = true; pan.startX = e.touches[0].clientX; pan.startY = e.touches[0].clientY;
+}
+function panMove(e) {
+  if (!pan.active) return;
+  doPan(e.clientX - pan.startX, e.clientY - pan.startY);
+  pan.startX = e.clientX; pan.startY = e.clientY;
+}
+function panTouchMove(e) {
+  if (!pan.active) return;
+  e.preventDefault();
+  doPan(e.touches[0].clientX - pan.startX, e.touches[0].clientY - pan.startY);
+  pan.startX = e.touches[0].clientX; pan.startY = e.touches[0].clientY;
+}
+function panUp() {
+  pan.active = false;
+  document.getElementById('pan-graphic')?.classList.remove('dragging');
+}
+function doPan(dx, dy) {
+  const img = document.getElementById('pan-img');
+  if (!img) return;
+  pan.x = Math.min(100, Math.max(0, pan.x - dx * 0.15));
+  pan.y = Math.min(100, Math.max(0, pan.y - dy * 0.15));
+  img.style.objectPosition = `${pan.x}% ${pan.y}%`;
+}
+
+// ── Generate posts from URL slug ───────────────
+function generatePosts(url) {
   let slug = '';
   try {
     const parts = new URL(url).pathname.split('/').filter(Boolean);
     slug = parts[parts.length - 1] || parts[parts.length - 2] || '';
   } catch(e) { slug = url; }
 
-  // Clean slug to readable title - remove Onet hashes (6-8 char alphanumeric segments)
-  // Split slug into parts, remove hash-like segments (short alphanumeric, mixed letters+digits)
-  const cleanParts = slug.split(/[-_]/).filter(part => {
-    if (part.length < 3) return false; // too short
-    if (/^[0-9]+$/.test(part)) return false; // pure numbers
-    if (part.length <= 8 && /[0-9]/.test(part) && /[a-z]/i.test(part)) return false; // mixed = hash
+  const words = slug.split(/[-_]/).filter(p => {
+    if (p.length < 3) return false;
+    if (/^\d+$/.test(p)) return false;
+    // Remove hash-like: short mixed alphanumeric like xvjr13w, 76zcgn2
+    if (p.length <= 8 && /\d/.test(p) && /[a-z]/i.test(p)) return false;
     return true;
   });
-  const title = cleanParts
-    .join(' ')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .replace(/\b\w/g, l => l.toUpperCase());
 
-  const short = title.length > 80 ? title.substring(0, 80) + '...' : title;
+  const title = words.join(' ').replace(/\b\w/g, l => l.toUpperCase());
+  const s = title.length > 90 ? title.slice(0, 90) + '...' : title;
 
   return [
-    `${short} 🗞️ Co o tym sądzisz? Daj znać w komentarzu! #Polska #Wiadomości`,
-    `Czy to dobra decyzja? "${short}" — opinie są podzielone. 🤔 A Wy co myślicie? #Polityka #Polska`,
-    `To dotyczy każdego z nas. ${short} — jak to wpłynie na Twoje życie? 💬 #Polska #Wiadomości`,
+    `${s} 🗞️ Co o tym sądzisz? Napisz w komentarzu! #Polska #Wiadomości`,
+    `Czy to była dobra decyzja? ${s} — zdania są podzielone. 🤔 A Wy co myślicie? #Polityka #Polska`,
+    `To dotyczy każdego z nas. ${s} — jak to oceniasz? 💬 #Polska #Wiadomości`,
+    '',
   ];
 }
 
+// ── Fetch article ──────────────────────────────
 async function fetchArticle() {
   const url = document.getElementById('url-input').value.trim();
   if (!url) return;
-
   state.url = url;
-  state.domain = getDomain(url);
 
-  const fetchBtn = document.getElementById('fetch-btn');
-  const postsList = document.getElementById('posts-list');
+  const btn = document.getElementById('fetch-btn');
+  btn.disabled = true;
+  btn.textContent = '...';
 
-  fetchBtn.disabled = true;
-  fetchBtn.textContent = '...';
-
-  // Show shimmer
   document.getElementById('posts-section').style.display = 'block';
-  postsList.innerHTML = '<div class="shimmer"></div><div class="shimmer" style="margin-top:10px"></div><div class="shimmer" style="margin-top:10px"></div>';
+  document.getElementById('posts-list').innerHTML =
+    '<div class="shimmer"></div><div class="shimmer" style="margin-top:8px"></div><div class="shimmer" style="margin-top:8px"></div>';
 
-  // Set fanpage based on domain
-  if (state.domain) {
-    const cfg = DOMAIN_CONFIG[state.domain];
-    const sel = document.getElementById('fanpage-select');
-    sel.value = cfg.fanpage;
-    updatePreviewFanpage(cfg);
-  }
+  // Fetch article HTML + generate posts via Claude API (claude.ai only)
+  let author = '';
+  let imageUrl = '';
+  let htmlContent = '';
 
   try {
-    // Generate posts locally from URL slug (no API needed)
-    const parsed = { posts: generatePostsFromUrl(url) };
-    state.imageUrl = null;
-
-    state.posts = parsed.posts;
-
-    // Apply bookmarklet image if available
-    if (window.__bmImg) {
-      loadImageFromUrl(window.__bmImg);
-      window.__bmImg = null;
+    // Try multiple proxies
+    const proxies = [
+      `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
+      `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+    ];
+    let htmlContent2 = '';
+    for (const proxy of proxies) {
+      try {
+        const r = await fetch(proxy, { signal: AbortSignal.timeout(6000) });
+        const d = await r.json().catch(() => ({ contents: r.text ? r.text() : '' }));
+        htmlContent2 = d.contents || d || '';
+        if (typeof htmlContent2 !== 'string') htmlContent2 = JSON.stringify(htmlContent2);
+        if (htmlContent2.length > 500) break;
+      } catch(e) { continue; }
     }
+    htmlContent = htmlContent2;
 
-    renderPosts();
+    const aMatch = htmlContent.match(/class="ods-a-source-photo"[^>]*>([^<]+)<\/div>/);
+    if (aMatch) author = aMatch[1].trim();
 
-    document.getElementById('fanpage-section').style.display = 'block';
-    document.getElementById('empty-state').style.display = 'none';
-    document.getElementById('fb-preview').style.display = 'block';
+    const preload = htmlContent.match(/<link[^>]+rel="preload"[^>]+as="image"[^>]+href="([^"]+)"/);
+    if (preload) imageUrl = preload[1];
+    if (!imageUrl) {
+      const og = htmlContent.match(/property="og:image"\s+content="([^"]+)"/);
+      if (og) imageUrl = og[1];
+    }
+  } catch(e) { /* proxy failed */ }
 
-  } catch (err) {
-    postsList.innerHTML = `<div style="color:#c0392b;font-size:14px;padding:12px">Błąd: ${err.message}</div>`;
-  } finally {
-    fetchBtn.disabled = false;
-    fetchBtn.textContent = 'Analizuj →';
+  if (author) {
+    state.author = author;
+    document.getElementById('author-input').value = author;
   }
+
+  // Generate posts via Claude API
+  let posts = generatePosts(url); // fallback
+  try {
+    // Strip HTML to plain text
+    const tmp = document.createElement('div');
+    tmp.innerHTML = htmlContent;
+    const articleText = (tmp.innerText || tmp.textContent || '').replace(/\s+/g,' ').trim().slice(0, 3000);
+
+    const apiResp = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer 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'
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        max_tokens: 600,
+        messages: [
+          {
+            role: 'system',
+            content: 'Generujesz zajawki na Facebooka dla polskiej redakcji. Odpowiadasz TYLKO i wyłącznie JSON, zero innych słów, zero markdown.'
+          },
+          {
+            role: 'user',
+            content: `Na podstawie poniższej treści artykułu napisz 3 zajawki na Facebooka.
+
+Zasady:
+- Każda max 2 zdania
+- Ton: lekki, przystępny, głos redakcji
+- Haczyk + pytanie prowokujące do dyskusji
+- 1-2 emoji, 2-3 hashtagi
+- Zajawka 1: faktyczna z pytaniem do czytelników
+- Zajawka 2: prowokacja, kontrowersja, szerszy kontekst (NIE musi być dosłownie o tym co w artykule — szukaj szerszego pytania które artykuł wywołuje)
+- Zajawka 3: ludzki kąt, emocje, codzienność
+
+Treść artykułu:
+${articleText || url}
+
+Zwróć TYLKO ten JSON:
+{"posts":["zajawka1","zajawka2","zajawka3"]}`
+          }
+        ]
+      })
+    });
+
+    if (apiResp.ok) {
+      const apiData = await apiResp.json();
+      const text = apiData.choices?.[0]?.message?.content || '';
+      const match = text.match(/\{[\s\S]*"posts"[\s\S]*\}/);
+      if (match) {
+        const parsed = JSON.parse(match[0]);
+        if (parsed.posts && parsed.posts.length >= 3) {
+          posts = [...parsed.posts, ''];
+        }
+      }
+    }
+  } catch(e) { /* API failed, use slug fallback */ }
+
+  state.posts = posts;
+  renderPosts();
+
+  document.getElementById('fanpage-section').style.display = 'block';
+  document.getElementById('image-section').style.display = 'block';
+  document.getElementById('author-section').style.display = 'block';
+  document.getElementById('empty-state').style.display = 'none';
+
+  // Try auto-loading image
+  if (imageUrl) {
+    document.getElementById('image-hint').textContent = 'Próba automatycznego załadowania zdjęcia...';
+    tryLoadImage(imageUrl);
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Analizuj →';
 }
 
+function tryLoadImage(imgUrl) {
+  // Show image directly via src (no canvas/CORS needed for display)
+  // For download we'll re-fetch via img element at that point
+  state.imageDataUrl = imgUrl; // store URL directly
+  state.imageIsUrl = true;
+  renderGraphic();
+  document.getElementById('image-hint').textContent = '✓ Zdjęcie załadowane z artykułu';
+  const dz = document.getElementById('image-dropzone');
+  dz.classList.add('has-image');
+  dz.querySelector('.dropzone-text').textContent = 'Zdjęcie z artykułu (możesz podmienić)';
+  dz.querySelector('.dropzone-icon').textContent = '✓';
+  document.getElementById('fontsize-section').style.display = 'block';
+  document.getElementById('download-section').style.display = 'block';
+  updateDownloadBtn();
+}
+
+// ── Set image ──────────────────────────────────
+function setImage(dataUrl) {
+  state.imageDataUrl = dataUrl;
+  state.imageIsUrl = false;
+  renderGraphic();
+  document.getElementById('fontsize-section').style.display = 'block';
+  document.getElementById('download-section').style.display = 'block';
+  updateDownloadBtn();
+}
+
+// ── Render posts ───────────────────────────────
 function renderPosts() {
   const list = document.getElementById('posts-list');
   list.innerHTML = '';
   state.posts.forEach((post, i) => {
-    const el = document.createElement('div');
-    el.className = 'post-option';
-    el.innerHTML = `
-      <div class="post-option-tag">Post ${i+1} — ${POST_TAGS[i]}</div>
-      <div class="post-option-text">${escHtml(post)}</div>
-      <div class="check">✓</div>
-    `;
-    el.onclick = () => selectPost(i);
-    list.appendChild(el);
+    const isOwn = i === 3;
+    const div = document.createElement('div');
+    div.className = 'post-item' + (state.selectedPost === i ? ' selected' : '');
+    div.innerHTML = `
+      <div class="post-header" onclick="selectPost(${i})">
+        <span class="post-tag${isOwn ? ' empty' : ''}">${POST_TAGS[i]}</span>
+        <span class="post-preview-text" id="prev-${i}">${esc(post || (isOwn ? 'Wpisz własny tekst...' : ''))}</span>
+      </div>
+      <textarea class="post-textarea" placeholder="${isOwn ? 'Wpisz własny tekst posta...' : 'Edytuj zajawkę...'}"
+        oninput="editPost(${i},this.value)">${esc(post)}</textarea>`;
+    list.appendChild(div);
   });
 }
 
-function selectPost(idx) {
-  state.selectedPost = idx;
-  document.querySelectorAll('.post-option').forEach((el, i) => {
-    el.classList.toggle('selected', i === idx);
-  });
-  document.getElementById('publish-btn').disabled = false;
-  updatePreviewCopy();
-  updatePreviewGraphic();
+function selectPost(i) {
+  state.selectedPost = i;
+  document.querySelectorAll('.post-item').forEach((el, idx) => el.classList.toggle('selected', idx === i));
+  document.getElementById('fb-copy').textContent = state.posts[i] || '';
+  renderGraphic();
+  document.getElementById('download-section').style.display = 'block';
+  updateDownloadBtn();
 }
 
-function updatePreviewCopy() {
-  if (state.selectedPost === null) return;
-  const post = state.posts[state.selectedPost];
-  const copyEl = document.getElementById('fb-copy');
-  copyEl.innerHTML = escHtml(post) + `\n\nWięcej informacji znajdziesz w linku: <span class="fb-link">${escHtml(state.url)}</span>`;
-}
-
-function updatePreviewGraphic() {
-  const wrap = document.getElementById('fb-graphic-wrap');
-  const question = state.selectedPost !== null ? extractQuestion(state.posts[state.selectedPost]) : '';
-
-  if (state.imageUrl) {
-    wrap.innerHTML = `
-      <div class="fb-graphic">
-        <img referrerpolicy="no-referrer" src="${escHtml(state.imageUrl)}" alt=""
-          onload="document.getElementById('image-section').style.display='none'"
-          onerror="onImageError()" />
-        <div class="graphic-overlay">
-          <div class="graphic-question">${escHtml(question)}</div>
-        </div>
-      </div>`;
-  } else {
-    // No image found automatically — show manual input
-    showImageFallback('Wgraj zdjęcie ręcznie.');
-    wrap.innerHTML = `
-      <div class="fb-graphic" style="background:#111">
-        <div class="graphic-overlay" style="background:linear-gradient(to top,rgba(0,0,0,0.9),rgba(0,0,0,0.4))">
-          <div class="graphic-question">${escHtml(question)}</div>
-        </div>
-      </div>`;
+function editPost(i, val) {
+  state.posts[i] = val;
+  const prev = document.getElementById(`prev-${i}`);
+  if (prev) prev.textContent = val || (i === 3 ? 'Wpisz własny tekst...' : '');
+  if (state.selectedPost === i) {
+    document.getElementById('fb-copy').textContent = val;
+    renderGraphic();
   }
 }
 
-function onImageError() {
-  showImageFallback('Wgraj zdjęcie ręcznie.');
-  // Keep graphic with dark background
-  const wrap = document.getElementById('fb-graphic-wrap');
-  const question = state.selectedPost !== null ? extractQuestion(state.posts[state.selectedPost]) : '';
-  wrap.innerHTML = `
-    <div class="fb-graphic" style="background:#111">
-      <div class="graphic-overlay" style="background:linear-gradient(to top,rgba(0,0,0,0.9),rgba(0,0,0,0.4))">
-        <div class="graphic-question">${escHtml(question)}</div>
-      </div>
-    </div>`;
-}
-
-function showImageFallback(hint) {
-  const section = document.getElementById('image-section');
-  section.style.display = 'block';
-  document.getElementById('image-hint').textContent = hint;
-}
-
-function applyUploadedImage(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    const dataUrl = e.target.result;
-    state.imageMime = file.type || 'image/jpeg';
-    state.imageBase64 = dataUrl.split(',')[1];
-    state.imageUrl = null; // using base64, not URL
-
-    // Update dropzone appearance
-    const dz = document.getElementById('image-dropzone');
-    dz.classList.add('has-image');
-    const shortName = file.name.length > 40 ? file.name.substring(0, 40) + '…' : file.name;
-    dz.querySelector('.dropzone-text').textContent = shortName;
-    dz.querySelector('.dropzone-icon').textContent = '✓';
-
-    // Show font size control
-    document.getElementById('fontsize-section').style.display = 'block';
-
-    // Update preview
-    const wrap = document.getElementById('fb-graphic-wrap');
-    const question = state.selectedPost !== null ? extractQuestion(state.posts[state.selectedPost]) : '';
-    wrap.innerHTML = `
-      <div class="fb-graphic" id="pan-graphic">
-        <img src="${dataUrl}" alt="" id="pan-img" />
-        <div class="graphic-overlay" style="background:linear-gradient(to top,rgba(0,0,0,0.82) 0%,rgba(0,0,0,0.18) 55%,transparent 100%)">
-          <div class="graphic-question">${escHtml(question)}</div>
-        </div>
-        <div class="pan-hint" id="pan-hint">✥ Przeciągnij aby kadrować</div>
-      </div>`;
-    initPan();
-    // Apply current font size
-    const sliderVal = document.getElementById('font-slider').value;
-    setTimeout(() => updateFontSize(sliderVal), 50);
-  };
-  reader.readAsDataURL(file);
-}
-
-function extractQuestion(post) {
-  const clean = (str) => str
-    .replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}]/gu, '')
-    .replace(/#\S+/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
+// ── Graphic rendering ──────────────────────────
+function extractQ(post) {
+  if (!post) return '';
+  const clean = s => s.replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}]/gu, '')
+    .replace(/#\S+/g, '').replace(/\s+/g, ' ').trim();
   const sentences = post.split(/(?<=[.!?])\s+/);
   const q = sentences.find(s => s.includes('?'));
   return q ? clean(q) : clean(post.split(/[.!?]/)[0]);
 }
 
-function updatePreviewFanpage(cfg) {
-  document.getElementById('fb-avatar').textContent = cfg.initials;
-  document.getElementById('fb-avatar').style.background = cfg.color;
-  document.getElementById('fb-avatar').style.color = cfg.textColor || 'white';
-  document.getElementById('fb-page-name').textContent = cfg.name;
-}
-
-async function loadImageBase64(url) {
-  // base64 for n8n — best-effort, CORS may block some domains
-  try {
-    const res = await fetch(url);
-    const blob = await res.blob();
-    const reader = new FileReader();
-    reader.onload = () => { state.imageBase64 = reader.result.split(',')[1]; };
-    reader.readAsDataURL(blob);
-  } catch { 
-    // CORS blocked — n8n will use image_url instead
-    state.imageBase64 = null; 
-  }
-}
-
-document.getElementById('fanpage-select').addEventListener('change', function() {
-  const val = this.value;
-  const cfg = Object.values(DOMAIN_CONFIG).find(c => c.fanpage === val);
-  if (cfg) updatePreviewFanpage(cfg);
-});
-
-async function publish() {
-  if (state.selectedPost === null) return;
-
-  const btn = document.getElementById('publish-btn');
-  const statusEl = document.getElementById('status-msg');
-  const sel = document.getElementById('fanpage-select');
-  const selectedOption = sel.options[sel.selectedIndex];
-  const fanpageName = selectedOption.text;
-  const fanpageId = sel.value;
-
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>Publikowanie...';
-  statusEl.className = 'status-msg';
-  statusEl.style.display = 'none';
-
-  const post = state.posts[state.selectedPost];
-  const copyText = post + `\n\nWięcej informacji znajdziesz w linku: ${state.url}`;
-  const question = extractQuestion(post);
-
-  const payload = {
-    article_url: state.url,
-    post_copy: copyText,
-    question_for_graphic: question,
-    fanpage_id: fanpageId,
-    fanpage_name: fanpageName,
-    image_url: state.imageUrl || null,
-    image_base64: state.imageBase64 || null,
-    image_mime: state.imageMime || 'image/jpeg',
-    image_source: state.imageBase64 ? 'upload' : (state.imageUrl ? 'url' : null),
-    post_index: state.selectedPost,
-    post_tag: POST_TAGS[state.selectedPost],
-    timestamp: new Date().toISOString(),
-  };
-
-  try {
-    const res = await fetch(N8N_WEBHOOK, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-
-    if (res.ok) {
-      statusEl.textContent = '✓ Post wysłany do n8n! Publikacja w toku.';
-      statusEl.className = 'status-msg success';
-    } else {
-      throw new Error(`HTTP ${res.status}`);
-    }
-  } catch (err) {
-    statusEl.textContent = `Błąd wysyłki: ${err.message}`;
-    statusEl.className = 'status-msg error';
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = 'Opublikuj na Facebooku';
-  }
-}
-
-function updateFontSize(val) {
-  document.getElementById('font-size-label').textContent = val + 'px';
-  const q = document.querySelector('.graphic-question');
-  if (q) q.style.fontSize = val + 'px';
-}
-
-function loadImageFromUrl(imgUrl) {
-  if (!imgUrl) return;
-  // Show image section and load via img tag (same-session, no CORS)
-  document.getElementById('image-section').style.display = 'block';
-  document.getElementById('fontsize-section').style.display = 'block';
-  state.imageUrl = imgUrl;
-
+function renderGraphic() {
+  if (!state.imageDataUrl) return;
   const wrap = document.getElementById('fb-graphic-wrap');
-  const question = state.selectedPost !== null ? extractQuestion(state.posts[state.selectedPost] || '') : '';
+  const q = state.selectedPost !== null ? extractQ(state.posts[state.selectedPost]) : '';
+  const author = state.author;
+  const fontSize = document.getElementById('font-slider').value;
+
   wrap.innerHTML = `
     <div class="fb-graphic" id="pan-graphic">
-      <img src="${imgUrl}" id="pan-img" referrerpolicy="no-referrer"
-        onload="initPan()"
-        onerror="this.parentElement.style.background='#222'" />
-      <div class="graphic-overlay" style="background:linear-gradient(to top,rgba(0,0,0,0.82) 0%,rgba(0,0,0,0.18) 55%,transparent 100%)">
-        <div class="graphic-question">${escHtml(question)}</div>
+      <img src="${state.imageDataUrl}" id="pan-img" referrerpolicy="no-referrer" crossorigin="anonymous" />
+      <div class="graphic-overlay">
+        <div class="graphic-question" id="graphic-q" style="font-size:${fontSize}px">${esc(q)}</div>
       </div>
+      <div class="graphic-author" id="graphic-author">${esc(author)}</div>
       <div class="pan-hint" id="pan-hint">✥ Przeciągnij aby kadrować</div>
     </div>`;
+  initPan();
 }
 
-function escHtml(str) {
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+// ── Author ─────────────────────────────────────
+function updateAuthor() {
+  state.author = document.getElementById('author-input').value;
+  const el = document.getElementById('graphic-author');
+  if (el) el.textContent = state.author;
 }
 
-// Auto-load from bookmarklet via URL params
-window.addEventListener('DOMContentLoaded', function() {
-  const params = new URLSearchParams(location.search);
-  const bmUrl = params.get('url');
-  const bmImg = params.get('img');
-  if (bmUrl) {
-    document.getElementById('url-input').value = decodeURIComponent(bmUrl);
-    if (bmImg) window.__bmImg = decodeURIComponent(bmImg);
-    fetchArticle();
-    // Clean URL bar after fetch starts
-    setTimeout(() => history.replaceState({}, '', location.pathname), 500);
-  }
+// ── Font size ──────────────────────────────────
+function updateFontSize(val) {
+  document.getElementById('font-val').textContent = val + 'px';
+  const el = document.getElementById('graphic-q');
+  if (el) el.style.fontSize = val + 'px';
+}
+
+// ── Image upload ───────────────────────────────
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('image-dropzone').classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) loadFile(file);
+}
+function applyUploadedImage(input) {
+  const file = input.files[0];
+  if (file) loadFile(file);
+}
+function loadFile(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    const dz = document.getElementById('image-dropzone');
+    dz.classList.add('has-image');
+    dz.querySelector('.dropzone-text').textContent = file.name.length > 40 ? file.name.slice(0,40)+'…' : file.name;
+    dz.querySelector('.dropzone-icon').textContent = '✓';
+    setImage(e.target.result);
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── Fanpage ────────────────────────────────────
+document.getElementById('fanpage-select').addEventListener('change', function() {
+  const fp = FANPAGES[this.value];
+  if (!fp) return;
+  document.getElementById('fb-page-name').textContent = fp.name;
+  document.getElementById('fb-avatar').textContent = fp.initial;
+  document.getElementById('fb-avatar').style.background = fp.color;
 });
+
+// ── Download ───────────────────────────────────
+function updateDownloadBtn() {
+  const btn = document.getElementById('download-btn');
+  btn.disabled = !(state.imageDataUrl && state.selectedPost !== null);
+}
+
+function wrapText(ctx, text, maxW) {
+  const words = text.split(' ');
+  const lines = []; let line = '';
+  for (const w of words) {
+    const test = line ? line + ' ' + w : w;
+    if (ctx.measureText(test).width > maxW && line) { lines.push(line); line = w; }
+    else line = test;
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+async function downloadGraphic() {
+  const btn = document.getElementById('download-btn');
+  btn.disabled = true; btn.textContent = 'Generuję...';
+
+  try {
+    const size = document.getElementById('pan-graphic').offsetWidth;
+    const scale = 2;
+    const canvas = document.createElement('canvas');
+    canvas.width = size * scale;
+    canvas.height = size * scale;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(scale, scale);
+
+    // Background
+    ctx.fillStyle = '#1a1a1a';
+    ctx.fillRect(0, 0, size, size);
+
+    // Image with pan position
+    const imgEl = document.getElementById('pan-img');
+    if (imgEl) {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.referrerPolicy = 'no-referrer';
+      img.src = state.imageDataUrl;
+      await new Promise(r => { img.onload = r; img.onerror = r; });
+      const natW = img.naturalWidth, natH = img.naturalHeight;
+      const s = Math.max(size / natW, size / natH);
+      const dw = natW * s, dh = natH * s;
+      const dx = (size - dw) * (pan.x / 100);
+      const dy = (size - dh) * (pan.y / 100);
+      ctx.drawImage(img, dx, dy, dw, dh);
+    }
+
+    // Gradient overlay
+    const grad = ctx.createLinearGradient(0, size, 0, 0);
+    grad.addColorStop(0, 'rgba(0,0,0,0.82)');
+    grad.addColorStop(0.55, 'rgba(0,0,0,0.15)');
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, size, size);
+
+    // Question text
+    const qEl = document.getElementById('graphic-q');
+    if (qEl && qEl.textContent) {
+      const fs = parseInt(qEl.style.fontSize) || 14;
+      ctx.font = `800 ${fs * 1.1}px 'Fira Sans', sans-serif`;
+      ctx.fillStyle = 'white';
+      ctx.textBaseline = 'bottom';
+      ctx.shadowColor = 'rgba(0,0,0,0.8)';
+      ctx.shadowBlur = 6;
+      const lines = wrapText(ctx, qEl.textContent.toUpperCase(), size - 40);
+      let y = size - 20;
+      for (let i = lines.length - 1; i >= 0; i--) {
+        ctx.fillText(lines[i], 20, y);
+        y -= fs * 1.4;
+      }
+    }
+
+    // Author — vertical, top right
+    const author = state.author;
+    if (author) {
+      ctx.save();
+      ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0;
+      const fs = 10;
+      ctx.font = `500 ${fs}px 'DM Sans', sans-serif`;
+      const tw = ctx.measureText(author).width;
+      const bw = fs + 8, bh = tw + 12;
+      ctx.fillStyle = 'rgba(0,0,0,0.35)';
+      ctx.fillRect(size - bw, 8, bw, bh);
+      ctx.translate(size - bw / 2, 8 + bh / 2);
+      ctx.rotate(Math.PI / 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.85)';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(author, 0, 0);
+      ctx.restore();
+    }
+
+    const a = document.createElement('a');
+    a.download = `grafika-${Date.now()}.jpg`;
+    a.href = canvas.toDataURL('image/jpeg', 0.92);
+    a.click();
+
+  } catch(e) { alert('Błąd pobierania: ' + e.message); }
+
+  btn.textContent = '⬇ Pobierz grafikę';
+  updateDownloadBtn();
+}
+
+// ── Helpers ────────────────────────────────────
+function esc(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
 document.getElementById('url-input').addEventListener('keydown', e => {
   if (e.key === 'Enter') fetchArticle();
 });
 
-// ── Pan / crop logic (object-position based) ─────
-let panState = { posX: 50, posY: 50, startX: 0, startY: 0, dragging: false };
-
-function initPan() {
-  panState = { posX: 50, posY: 50, startX: 0, startY: 0, dragging: false };
-  const container = document.getElementById('pan-graphic');
-  const img = document.getElementById('pan-img');
-  if (!container || !img) return;
-
-  img.style.objectPosition = '50% 50%';
-
-  setTimeout(() => {
-    const hint = document.getElementById('pan-hint');
-    if (hint) hint.style.opacity = '0';
-  }, 2500);
-
-  // Attach to container so overlay clicks also work
-  container.addEventListener('mousedown', startDrag);
-  container.addEventListener('touchstart', startDragTouch, { passive: false });
-  window.addEventListener('mousemove', onDrag);
-  window.addEventListener('touchmove', onDragTouch, { passive: false });
-  window.addEventListener('mouseup', endDrag);
-  window.addEventListener('touchend', endDrag);
-}
-
-function startDrag(e) {
-  e.preventDefault();
-  panState.dragging = true;
-  panState.startX = e.clientX;
-  panState.startY = e.clientY;
-  const container = document.getElementById('pan-graphic');
-  if (container) container.classList.add('dragging');
-}
-
-function startDragTouch(e) {
-  e.preventDefault();
-  panState.dragging = true;
-  panState.startX = e.touches[0].clientX;
-  panState.startY = e.touches[0].clientY;
-}
-
-function onDrag(e) {
-  if (!panState.dragging) return;
-  const dx = e.clientX - panState.startX;
-  const dy = e.clientY - panState.startY;
-  panState.startX = e.clientX;
-  panState.startY = e.clientY;
-  applyPan(dx, dy);
-}
-
-function onDragTouch(e) {
-  if (!panState.dragging) return;
-  e.preventDefault();
-  const dx = e.touches[0].clientX - panState.startX;
-  const dy = e.touches[0].clientY - panState.startY;
-  panState.startX = e.touches[0].clientX;
-  panState.startY = e.touches[0].clientY;
-  applyPan(dx, dy);
-}
-
-function endDrag() {
-  panState.dragging = false;
-  const container = document.getElementById('pan-graphic');
-  if (container) container.classList.remove('dragging');
-}
-
-function applyPan(dx, dy) {
-  const img = document.getElementById('pan-img');
-  if (!img) return;
-  // Convert pixel delta to percentage (sensitivity factor 0.15)
-  panState.posX = Math.min(100, Math.max(0, panState.posX - dx * 0.15));
-  panState.posY = Math.min(100, Math.max(0, panState.posY - dy * 0.15));
-  img.style.objectPosition = `${panState.posX}% ${panState.posY}%`;
-}
-// ─────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(location.search);
+  const u = params.get('url');
+  if (u) {
+    document.getElementById('url-input').value = decodeURIComponent(u);
+    setTimeout(() => history.replaceState({}, '', location.pathname), 300);
+    fetchArticle();
+  }
+});
 </script>
+<div style="position:fixed;bottom:12px;right:16px;font-family:'Syne',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.5px;color:#bbb;pointer-events:none">by Social Automation</div>
 </body>
 </html>
